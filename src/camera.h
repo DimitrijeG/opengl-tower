@@ -27,7 +27,6 @@ public:
 	}
 
 	glm::vec3 GetPosition() {
-		// This calculation creates the same position vector used in your GetViewMatrix()
 		return glm::vec3(sin(angle) * radius, yPos, cos(angle) * radius);
 	}
 

@@ -50,14 +50,14 @@ int main(void)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    Shader shader("res/shader/basic.vert", "res/shader/basic.frag");
-
-    TextRenderer text(wWidth, wHeight);
+    
+    // -- Resource and Object Initialization --
+     TextRenderer text(wWidth, wHeight);
     text.Load("res/font/Kanit-Bold.ttf", 52);
+    
+    Shader shader("res/shader/basic.vert", "res/shader/basic.frag");
 
     TowerBlock::Init();
     std::vector<TowerBlock> towerBlocks;
@@ -102,7 +102,6 @@ int main(void)
         shader.SetMatrix4fv("uV", camera.GetViewMatrix());
 
         ground.Render(shader);
-
         for (const auto& block : towerBlocks)
         {
             block.Render(shader);
@@ -126,7 +125,6 @@ int main(void)
 }
 
 
-// NO CHANGES ARE NEEDED IN processInput
 void processInput(GLFWwindow* window, std::vector<TowerBlock>& towerBlocks, Camera& camera,
     std::array<std::unique_ptr<Projection>, 2>& projections, bool& isPerspective, float deltaTime)
 {
