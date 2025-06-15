@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glew.h"
 
 class TowerBlock
 {
@@ -39,7 +40,7 @@ private:
 
 Mesh TowerBlock::mesh;
 float TowerBlock::vertices[] = {
-     // positions          // normals
+     // Positions          // Normals
      // Back face (-Z)
       0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
       0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -69,10 +70,10 @@ float TowerBlock::vertices[] = {
       0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
       0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
       // Top face (+Y)
-       0.5f,  0.5f,  0.5f, 0.0f,  1.0f,  0.0f,
-       0.5f,  0.5f, -0.5f, 0.0f,  1.0f,  0.0f,
-      -0.5f,  0.5f, -0.5f, 0.0f,  1.0f,  0.0f,
-      -0.5f,  0.5f, -0.5f, 0.0f,  1.0f,  0.0f,
-      -0.5f,  0.5f,  0.5f, 0.0f,  1.0f,  0.0f,
-       0.5f,  0.5f,  0.5f, 0.0f,  1.0f,  0.0f
+      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+      0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f
 };

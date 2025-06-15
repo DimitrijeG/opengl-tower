@@ -2,7 +2,6 @@
 
 #include "glew.h"
 
-
 class Projection
 {
 public:
@@ -20,7 +19,6 @@ protected:
     int width, height;
     float nearPlane, farPlane;
 };
-
 
 class PerspectiveProjection : public Projection
 {
@@ -44,7 +42,6 @@ public:
 private:
     float fov;
 };
-
 
 class OrthographicProjection : public Projection
 {

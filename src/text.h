@@ -3,9 +3,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "glew.h"
 #include "shader.h"
-
 
 struct Character {
     unsigned int textureId;
@@ -13,7 +11,6 @@ struct Character {
     glm::ivec2   bearing;
     unsigned int advance;
 };
-
 
 class TextRenderer
 {

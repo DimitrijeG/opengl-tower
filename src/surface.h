@@ -1,12 +1,13 @@
 #pragma once
 
+#include "glew.h"
 
 class Surface
 {
 public:
     Surface(const char* texturePath) {
         mesh.Init(vertices, 48, 6, true);
-        textureId = loadTexture(texturePath); // Assumes you have this function
+        textureId = loadTexture(texturePath);
         model = glm::mat4(1.0f);
     }
 
@@ -31,7 +32,7 @@ private:
 };
 
 float Surface::vertices[] = {
-    // positions           // normals         // texture Coords
+    // Positions           // Normals         // Texture Coords
     -20.0f, 0.0f,  20.0f,  0.0f, 1.0f, 0.0f,   0.0f, 10.0f,
      20.0f, 0.0f,  20.0f,  0.0f, 1.0f, 0.0f,  10.0f, 10.0f,
      20.0f, 0.0f, -20.0f,  0.0f, 1.0f, 0.0f,  10.0f,  0.0f,

@@ -10,9 +10,9 @@
 #include "src/towerBlock.h"
 #include "src/text.h"
 
-
-const int MAX_TOWER_LAYERS = 6;
-
+const int MAX_TOWER_LAYERS = 8;
+const int TARGET_FPS = 60;
+const double TARGET_FRAME_TIME = 1.0 / TARGET_FPS;
 
 double scroll_y_offset = 0.0;
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -23,12 +23,11 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 void processInput(GLFWwindow* window, std::vector<TowerBlock>& towerBlocks, Camera& camera,
     std::array<std::unique_ptr<Projection>, 2>& projections, bool& isPerspective, float deltaTime);
 
-
 int main(void)
 {
     srand(time(0));
 
-    // -- GLFW & GLEW Initialization --
+    // GLFW & GLEW Initialization
     if (!glfwInit()) return 1;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -45,7 +44,7 @@ int main(void)
 
     if (glewInit() != GLEW_OK) return 3;
 
-    // -- OpenGL Configuration --
+    // OpenGL Configuration
     glViewport(0, 0, wWidth, wHeight);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -53,8 +52,8 @@ int main(void)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    // -- Resource and Object Initialization --
-     TextRenderer text(wWidth, wHeight);
+    // Resource and Object Initialization
+    TextRenderer text(wWidth, wHeight);
     text.Load("res/font/Kanit-Bold.ttf", 52);
     
     Shader shader("res/shader/basic.vert", "res/shader/basic.frag");
@@ -74,13 +73,14 @@ int main(void)
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
 
-    glm::vec3 lightPos(5.0f, 20.0f, 10.0f);
+    glm::vec3 lightPos(5.0f, 10.0f, 10.0f);
     glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // Pure white light
 
-    // -- Render Loop --
+    // Render Loop
     while (!glfwWindowShouldClose(window))
     {
-        float currentFrame = glfwGetTime();
+        float frameStartTime = glfwGetTime();
+        float currentFrame = frameStartTime;
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
@@ -90,7 +90,7 @@ int main(void)
         glClearColor(0.5f, 0.7f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // --- Render 3D Scene ---
+        // Render 3D Scene
         glEnable(GL_DEPTH_TEST);
         shader.Use();
 
@@ -107,18 +107,28 @@ int main(void)
             block.Render(shader);
         }
 
-        // --- Render HUD ---
+        // Render HUD
         glDisable(GL_DEPTH_TEST);
         glm::vec3 color = towerBlocks.size() == MAX_TOWER_LAYERS ? glm::vec3(1.0f, 0.0f, 0.0f) : glm::vec3(1.0f, 1.0f, 1.0f);
         std::string block_count_text = "Blocks: " + std::to_string(towerBlocks.size());
-        text.Render(block_count_text, 40.0f, 20.0f, 0.6f, color);
-        text.Render("Dimitrije Gasic SV31/2021", 40.0f, wHeight - 70.0f, 1.0f, glm::vec3(1.0f));
-
+        text.Render(block_count_text, 40.0f, 20.0f, 1.0f, color);
+        text.Render("Dimitrije Gasic SV31/2021", 40.0f, wHeight - 70.0f, 1.2f, glm::vec3(1.0f));
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        // FPS Limiting
+        float frameEndTime = glfwGetTime();
+        float frameDuration = frameEndTime - frameStartTime;
+        if (frameDuration < TARGET_FRAME_TIME)
+        {
+            std::this_thread::sleep_for(
+                std::chrono::duration<double>(TARGET_FRAME_TIME - frameDuration)
+            );
+        }
     }
 
-    // -- Cleanup --
+    // Cleanup
     TowerBlock::Clear();
     glfwTerminate();
     return 0;
@@ -134,7 +144,7 @@ void processInput(GLFWwindow* window, std::vector<TowerBlock>& towerBlocks, Came
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    // --- Projection toggle ---
+    // Projection toggle
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS && !p_pressed)
     {
         isPerspective = !isPerspective;
@@ -142,8 +152,8 @@ void processInput(GLFWwindow* window, std::vector<TowerBlock>& towerBlocks, Came
     }
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE) p_pressed = false;
 
-    // --- Camera rotation inertia ---
-    float rotationSpeed = 3.0f;
+    // Camera rotation inertia
+    float rotationSpeed = 4.0f;
     float targetSpeed = 0.0f;
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -152,7 +162,7 @@ void processInput(GLFWwindow* window, std::vector<TowerBlock>& towerBlocks, Came
         targetSpeed += rotationSpeed;
     camera.SetRotationVelocity(targetSpeed);
 
-    // --- Zoom ---
+    // Zoom
     if (scroll_y_offset != 0.0)
     {
         float zoomSensitivity = 1.5f;
@@ -172,7 +182,14 @@ void processInput(GLFWwindow* window, std::vector<TowerBlock>& towerBlocks, Came
             }
 
             glm::vec4 newColor((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f, 1.0f);
-            glm::vec3 newScale(1.8f, 0.5f, 1.2f);
+
+            // Slightly randomize each dimension
+            float baseWidth = 1.8f, baseHeight = 0.5f, baseDepth = 1.2f;
+            float width  = baseWidth  + ((rand() % 41 - 20) / 100.0f);
+            float height = baseHeight + ((rand() % 41 - 20)  / 100.0f);
+            float depth  = baseDepth  + ((rand() % 41 - 20) / 100.0f);
+            glm::vec3 newScale(width, height, depth);
+
             float new_y_pos = last_y + (last_scale_y / 2.0f) + (newScale.y / 2.0f);
             glm::vec3 newPosition(0.0f, new_y_pos, 0.0f);
 

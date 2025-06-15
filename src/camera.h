@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glew.h"
 
 class Camera
 {
@@ -17,7 +18,7 @@ public:
 
 	void Update(float deltaTime)
 	{
-		float inertiaFactor = 0.1f;
+		float inertiaFactor = 0.08f;
 		angularVelocity += (targetAngularVelocity - angularVelocity) * inertiaFactor;
 		angle += angularVelocity * deltaTime;
 	}
