@@ -1,13 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 
-#include <array>
-#include <memory>
-#include <string>
-#include <vector>
-#include <time.h>
-
 #include "src/glew.h"
-#include <GLFW/glfw3.h> // Assuming this is the location for glfw3.h
 
 #include "src/shader.h"
 #include "src/mesh.h"
@@ -57,14 +50,14 @@ int main(void)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // -- Resource and Object Initialization --
+    Shader shader("res/shader/basic.vert", "res/shader/basic.frag");
+
     TextRenderer text(wWidth, wHeight);
     text.Load("res/font/Kanit-Bold.ttf", 52);
-
-    Shader shader("res/shader/basic.vert", "res/shader/basic.frag");
 
     TowerBlock::Init();
     std::vector<TowerBlock> towerBlocks;
@@ -80,6 +73,9 @@ int main(void)
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
+
+    glm::vec3 lightPos(5.0f, 20.0f, 10.0f);
+    glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // Pure white light
 
     // -- Render Loop --
     while (!glfwWindowShouldClose(window))
@@ -98,10 +94,15 @@ int main(void)
         glEnable(GL_DEPTH_TEST);
         shader.Use();
 
+        shader.SetVector3fv("uLightPos", lightPos);
+        shader.SetVector3fv("uLightColor", lightColor);
+        shader.SetVector3fv("uViewPos", camera.GetPosition());
+
         shader.SetMatrix4fv("uP", projections[isPerspective]->GetMatrix());
         shader.SetMatrix4fv("uV", camera.GetViewMatrix());
 
         ground.Render(shader);
+
         for (const auto& block : towerBlocks)
         {
             block.Render(shader);
@@ -125,6 +126,7 @@ int main(void)
 }
 
 
+// NO CHANGES ARE NEEDED IN processInput
 void processInput(GLFWwindow* window, std::vector<TowerBlock>& towerBlocks, Camera& camera,
     std::array<std::unique_ptr<Projection>, 2>& projections, bool& isPerspective, float deltaTime)
 {

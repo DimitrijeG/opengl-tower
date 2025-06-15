@@ -13,8 +13,7 @@ public:
 
 protected:
     Projection(int width, int height)
-        : width(width), height(height),
-        nearPlane(0.1f), farPlane(100.0f)
+        : width(width), height(height), nearPlane(0.1f), farPlane(100.0f)
     {
     }
 

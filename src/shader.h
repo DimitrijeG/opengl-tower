@@ -14,6 +14,7 @@ public:
     void SetVector4fv(const GLchar* name, const glm::vec4& value) { glUniform4fv(glGetUniformLocation(shaderId, name), 1, glm::value_ptr(value)); }
     void SetInteger(const GLchar* name, GLint value) { glUniform1i(glGetUniformLocation(shaderId, name), value); }
     void SetBool(const GLchar* name, GLboolean value) { glUniform1i(glGetUniformLocation(shaderId, name), value); }
+	void SetFloat(const GLchar* name, GLfloat value) { glUniform1f(glGetUniformLocation(shaderId, name), value); }
     void Clear() { glDeleteProgram(shaderId); shaderId = 0; }
 
     ~Shader() { Clear(); }
